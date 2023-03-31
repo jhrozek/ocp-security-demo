@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: logger-privileged
+spec:
+  containers:
+  - name: logger-privileged
+    image: "registry.access.redhat.com/ubi8/ubi-minimal:latest"
+    command: ["/bin/bash"]
+    args: ["-c", "set -eux; while true; do echo \"Time: $(date). Some error info.\" >> /var/log/test.log; sleep 2; done"]
+    securityContext:
+      seLinuxOptions:
+        type: spc_t
+    volumeMounts:
+    - name: varlog
+      mountPath: /var/log
+  restartPolicy: Never
+  volumes:
+  - name: varlog
+    hostPath:
+      path: /var/log
+      type: Directory
