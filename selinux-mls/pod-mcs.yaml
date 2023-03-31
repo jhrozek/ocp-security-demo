@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: beverages
+spec:
+  containers:
+  - name: pepsi
+    image: "registry.access.redhat.com/ubi8/ubi-minimal:latest"
+    command: ["/bin/bash"]
+    args: ["-c", "sleep 3600"]
+    securityContext:
+      seLinuxOptions:
+        user: system_u
+        role: system_r
+        type: container_t
+        level: s0:c175,c839
+    volumeMounts:
+      - mountPath: "/volume"
+        name: shared-volume
+  - name: coke
+    image: "registry.access.redhat.com/ubi8/ubi-minimal:latest"
+    command: ["/bin/bash"]
+    args: ["-c", "sleep 3600"]
+    volumeMounts:
+      - mountPath: "/volume"
+        name: shared-volume
+    securityContext:
+      seLinuxOptions:
+        user: system_u
+        role: system_r
+        type: container_t
+        level: s0:c200,c210
+  volumes:
+    - name: shared-volume
+      emptyDir: {}
+  restartPolicy: Never
