@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-nonpriv
+spec:
+  selector:
+    matchLabels:
+      app: nginx-nonpriv
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nginx-nonpriv
+    spec:
+      containers:
+      - name: nginx
+        image: quay.io/security-profiles-operator/test-nginx-unprivileged:1.21
+        ports:
+           - containerPort: 8080
+        securityContext:
+          seccompProfile:
+            type: RuntimeDefault
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+              - ALL
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
