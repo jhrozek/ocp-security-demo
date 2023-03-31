@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-root-deploy
+spec:
+  selector:
+    matchLabels:
+      app: nginx-root
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nginx-root
+    spec:
+      containers:
+      - name: nginx
+        image: quay.io/security-profiles-operator/test-nginx:1.19.1
+        ports:
+           - containerPort: 8080
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
